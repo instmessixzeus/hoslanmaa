@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Hoşlanma Oyunu</title>
+  <style>
+    body {
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background: linear-gradient(to right, #ffecd2, #fcb69f);
+      overflow: hidden;
+    }
+    h1 {
+      font-size: 2.5rem;
+      color: #333;
+    }
+    .buttons {
+      margin-top: 30px;
+    }
+    button {
+      font-size: 1.5rem;
+      padding: 10px 25px;
+      margin: 15px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .yes {
+      background-color: #4CAF50;
+      color: white;
+    }
+    .no {
+      background-color: #f44336;
+      color: white;
+      position: absolute;
+    }
+    .message {
+      font-size: 2rem;
+      margin-top: 30px;
+      color: #d6336c;
+    }
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+
+  <h1 id="question">Benden hoşlanıyor musun?</h1>
+  <div class="buttons">
+    <button class="yes" onclick="evetTiklandi()">Evet</button>
+    <button class="no" id="noBtn" onmouseover="kac()">Hayır</button>
+  </div>
+  <div class="message" id="message"></div>
+
+  <canvas id="confetti-canvas"></canvas>
+
+  <script>
+    const noBtn = document.getElementById("noBtn");
+
+    function kac() {
+      const x = Math.random() * (window.innerWidth - 100);
+      const y = Math.random() * (window.innerHeight - 100);
+      noBtn.style.left = `${x}px`;
+      noBtn.style.top = `${y}px`;
+    }
+
+    function evetTiklandi() {
+      document.getElementById("question").style.display = "none";
+      document.querySelector(".buttons").style.display = "none";
+      document.getElementById("message").textContent = "Bende senden hoşlanıyorum ❤️";
+      konfetiBaslat();
+    }
+
+    function konfetiBaslat() {
+      const canvas = document.getElementById('confetti-canvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      let parçacıklar = [];
+
+      for (let i = 0; i < 100; i++) {
+        parçacıklar.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height - canvas.height,
+          r: Math.random() * 6 + 4,
+          d: Math.random() * 30 + 10,
+          color: `hsl(${Math.random() * 360}, 100%, 60%)`,
+          tilt: Math.random() * 10 - 5
+        });
+      }
+
+      function çiz() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        for (let i = 0; i < parçacıklar.length; i++) {
+          const p = parçacıklar[i];
+          ctx.beginPath();
+          ctx.fillStyle = p.color;
+          ctx.arc(p.x + p.tilt, p.y, p.r, 0, Math.PI * 2, false);
+          ctx.fill();
+          p.y += p.d / 10;
+          p.tilt = Math.sin(p.y / 30) * 10;
+
+          if (p.y > canvas.height) {
+            p.y = -10;
+            p.x = Math.random() * canvas.width;
+          }
+        }
+        requestAnimationFrame(çiz);
+      }
+
+      çiz();
+    }
+  </script>
+</body>
+</html>
